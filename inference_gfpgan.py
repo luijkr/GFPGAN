@@ -24,12 +24,6 @@ def main():
     parser.add_argument('--aligned', action='store_true')
     parser.add_argument('--paste_back', action='store_false')
     parser.add_argument('--save_root', type=str, default='results')
-    parser.add_argument(
-        '--ext',
-        type=str,
-        default='auto',
-        help='Image extension. Options: auto | jpg | png, auto means using the same extension as inputs')
-    args = parser.parse_args()
 
     args = parser.parse_args()
     if args.test_path.endswith('/'):
@@ -38,7 +32,7 @@ def main():
 
     # background upsampler
     if args.bg_upsampler == 'realesrgan':
-        if not torch.cuda.is_available():  # CPU
+        if torch.cuda.is_available():  # CPU
             import warnings
             warnings.warn('The unoptimized RealESRGAN is very slow on CPU. We do not use it. '
                           'If you really want to use it, please modify the corresponding codes.')
@@ -51,7 +45,7 @@ def main():
                 tile=args.bg_tile,
                 tile_pad=10,
                 pre_pad=0,
-                half=True)  # need to set False in CPU mode
+                half=False)  # need to set False in CPU mode
     else:
         bg_upsampler = None
     # set up GFPGAN restorer
@@ -91,16 +85,10 @@ def main():
 
         # save restored img
         if restored_img is not None:
-            if args.ext == 'auto':
-                extension = ext[1:]
-            else:
-                extension = args.ext
-
             if args.suffix is not None:
-                save_restore_path = os.path.join(args.save_root, 'restored_imgs',
-                                                 f'{basename}_{args.suffix}.{extension}')
+                save_restore_path = os.path.join(args.save_root, 'restored_imgs', f'{basename}_{args.suffix}{ext}')
             else:
-                save_restore_path = os.path.join(args.save_root, 'restored_imgs', f'{basename}.{extension}')
+                save_restore_path = os.path.join(args.save_root, 'restored_imgs', img_name)
             imwrite(restored_img, save_restore_path)
 
     print(f'Results are in the [{args.save_root}] folder.')

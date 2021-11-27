@@ -57,6 +57,7 @@ class GFPGANer():
 
         if model_path.startswith('https://'):
             model_path = load_file_from_url(url=model_path, model_dir='gfpgan/weights', progress=True, file_name=None)
+
         loadnet = torch.load(model_path)
         if 'params_ema' in loadnet:
             keyname = 'params_ema'
@@ -76,8 +77,7 @@ class GFPGANer():
         else:
             self.face_helper.read_image(img)
             # get face landmarks for each face
-            self.face_helper.get_face_landmarks_5(only_center_face=only_center_face, eye_dist_threshold=5)
-            # eye_dist_threshold=5: skip faces whose eye distance is smaller than 5 pixels
+            self.face_helper.get_face_landmarks_5(only_center_face=only_center_face)
             # align and warp each face
             self.face_helper.align_warp_face()
 
