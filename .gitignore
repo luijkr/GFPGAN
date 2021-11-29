@@ -7,7 +7,7 @@ wandb/*
 tmp/*
 inputs/test/*
 
-version.py
+# version.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
